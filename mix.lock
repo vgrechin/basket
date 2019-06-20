@@ -1,0 +1,6 @@
+%{
+  "SnP500s": {:git, "https://github.com/datasets/s-and-p-500-companies", "d0a8a3be7e780f28f7c2d4eae4322317677e0e3f", []},
+  "dep_from_git": {:git, "https://github.com/exxeleron/qErlang", "e6c8f3a8573b5ab6351d17ad820e4c42735434fe", [tag: "1.0.0"]},
+  "nimble_csv": {:hex, :nimble_csv, "0.6.0", "a3673f26d41f986774fe6060e309615343d3cb83a6d435754d8b1fdbd5764879", [:mix], [], "hexpm"},
+  "qErlang": {:git, "https://github.com/exxeleron/qErlang", "e6c8f3a8573b5ab6351d17ad820e4c42735434fe", [tag: "1.0.0"]},
+}
