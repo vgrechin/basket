@@ -16,11 +16,11 @@ defmodule Basket do
 
           IO.inspect( constituents, label: "Constituents", limit: :infinity )
 
-          case Kdb.open( '127.0.0.1', 5001, '', '', 1000 ) do
+          with { kdb, _ } <- Kdb.open( '127.0.0.1', 5001, 'testusername', 'testpassword', :infinity ) do
+               IO.inspect( kdb, label: "Success" )
+               Kdb.close( kdb )
+          else
                { :error, reason } -> IO.inspect( reason, label: "Error" )
-               { kdb, _ } ->
-                    IO.inspect( kdb, label: "Success" )
-                    Kdb.close( kdb )
           end
 
           { :ok, self() }
