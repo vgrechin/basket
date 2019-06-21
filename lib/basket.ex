@@ -1,19 +1,19 @@
+NimbleCSV.define( CSVParser, separator: "," )
+
 defmodule Basket do
-  @moduledoc """
-  Documentation for Basket.
-  """
+     @constituents "deps/SnP500s/data/constituents.csv"
 
-  @doc """
-  Hello world.
+     def start( _type, _args ) do
+          { :ok, contents } = File.read( @constituents )
 
-  ## Examples
+          constituents = CSVParser.parse_string( contents )
+               |> Enum.map( fn [symbol, name, sector] ->
+                         { String.to_atom( symbol ), %{ symbol: symbol, name: name, sector: sector } }
+                    end )
+               |> Map.new
 
-      iex> Basket.hello()
-      :world
+          IO.inspect( constituents, label: "Constituents", limit: :infinity )
 
-  """
-  def hello do
-    obj = :qErlang.qObj()
-    :world
-  end
+          { :ok, self() }
+     end
 end
