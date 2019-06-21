@@ -1,37 +1,32 @@
 NimbleCSV.define( CSVParser, separator: "," )
 
 defmodule Basket do
-     @constituents "deps/SnP500s/data/constituents.csv"
-
-     alias :qErlang, as: Kdb
+     @snp500 "deps/SnP500s/data/constituents.csv"
 
      def start( _type, _args ) do
-          { :ok, contents } = File.read( @constituents )
+          Basket.Supervisor.start_link
 
-          constituents = CSVParser.parse_string( contents )
+          trade( @snp500 )
+
+          { :ok, self() }
+     end
+
+     defp spawn( { ticker, constituent },  accumulator ) do
+          { _result, pid } = GenServer.start( Market.Constituent, constituent )
+          Map.put( accumulator, ticker, pid )
+     end
+
+     defp trade( index // @snp500 ) do
+          { :ok, records } = File.read( index )
+
+          basket = CSVParser.parse_string( records )
                |> Enum.map( fn [symbol, name, sector] ->
                          { String.to_atom( symbol ), %{ symbol: symbol, name: name, sector: sector } }
                     end )
                |> Map.new
 
-          IO.inspect( constituents, label: "Constituents", limit: :infinity )
+          IO.inspect( basket, label: "Basket", limit: :infinity )
 
-          with { kdb, _ } <- Kdb.open( '127.0.0.1', 5001, 'testusername', 'testpassword', :infinity ) do
-               IO.inspect( kdb, label: "Success" )
-               query( kdb, "3.23 6.46" )
-               Kdb.close( kdb )
-          else
-               { :error, reason } -> IO.inspect( reason, label: "Error" )
-          end
-
-          { :ok, self() }
-     end
-
-     defp query( socket, arg ) do
-          with { :ok, { type, result } } <- Kdb.sync( socket, { :char_list, to_charlist( arg ) } ) do
-               IO.inspect( { type, result }, label: "Result" )
-          else
-               { :error, reason } -> IO.inspect( reason, label: "Error" )
-          end
+          constituents = Enum.reduce basket, %{}, &spawn/2
      end
 end
