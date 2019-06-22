@@ -1,6 +1,6 @@
 defmodule Market.Supervisor do
-     use supervisor
-     alias Market.{ Constituent, Provider }
+     use Supervisor
+     alias Market.Provider
 
      def start_link do
           Supervisor.start_link( __MODULE__, [] )

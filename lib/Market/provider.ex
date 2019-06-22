@@ -3,13 +3,17 @@ defmodule Market.Provider do
 
      alias :qErlang, as: Kdb
 
-     def init() do
+     def start_link do
+          GenServer.start_link( __MODULE__, %{}, name: :provider )
+     end
+
+     def init( _ ) do
           state = %{ connection: open() }
 
           { :ok, state }
      end
 
-     defp open()
+     defp open() do
           with { kdb, _ } <- Kdb.open( '127.0.0.1', 5001, 'testusername', 'testpassword' ) do
                IO.inspect( kdb, label: "Success" )
                query( kdb, "select avg px,avg vol by sym from trades" )

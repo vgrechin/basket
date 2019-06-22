@@ -1,23 +1,15 @@
 NimbleCSV.define( CSVParser, separator: "," )
 
 defmodule Basket do
+     use Application
+     use Task
+     alias Market.Constituent
      @snp500 "deps/SnP500s/data/constituents.csv"
 
      def start( _type, _args ) do
           Basket.Supervisor.start_link
 
-          trade( @snp500 )
-
-          { :ok, self() }
-     end
-
-     defp spawn( { ticker, constituent },  accumulator ) do
-          { _result, pid } = GenServer.start( Market.Constituent, constituent )
-          Map.put( accumulator, ticker, pid )
-     end
-
-     defp trade( index // @snp500 ) do
-          { :ok, records } = File.read( index )
+          { :ok, records } = File.read( @snp500 )
 
           basket = CSVParser.parse_string( records )
                |> Enum.map( fn [symbol, name, sector] ->
@@ -25,8 +17,18 @@ defmodule Basket do
                     end )
                |> Map.new
 
-          IO.inspect( basket, label: "Basket", limit: :infinity )
+          trade( basket )
 
+          { :ok, self() }
+     end
+
+     defp spawn( { ticker, constituent },  accumulator ) do
+          { :ok, pid } = GenServer.start( Constituent, { ticker, constituent } )
+          Map.put( accumulator, ticker, pid )
+     end
+
+     defp trade( basket ) do
           constituents = Enum.reduce basket, %{}, &spawn/2
+          Process.sleep( :infinity )
      end
 end
