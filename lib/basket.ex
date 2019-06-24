@@ -3,12 +3,12 @@ NimbleCSV.define( CSVParser, separator: "," )
 defmodule Basket do
      use Application
      use Task
+
+     alias :qErlang, as: Kdb
      alias Market.Constituent
      @snp500 "deps/SnP500s/data/constituents.csv"
 
      def start( _type, _args ) do
-          Basket.Supervisor.start_link
-
           { :ok, records } = File.read( @snp500 )
 
           basket = CSVParser.parse_string( records )
@@ -17,7 +17,13 @@ defmodule Basket do
                     end )
                |> Map.new
 
-          trade( basket )
+          with { connection, _ } <- Kdb.open( '127.0.0.1', 5001, 'testusername', 'testpassword' ) do
+               IO.inspect( connection, label: "Success" )
+               Basket.Supervisor.start_link( connection )
+               trade( basket )
+          else
+               { :error, reason } -> IO.inspect( reason, label: "Error" )
+          end
 
           { :ok, self() }
      end

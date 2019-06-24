@@ -3,41 +3,28 @@ defmodule Market.Provider do
 
      alias :qErlang, as: Kdb
 
-     def start_link do
-          GenServer.start_link( __MODULE__, %{}, name: :provider )
+     def start_link( connection ) do
+          GenServer.start_link( __MODULE__, [connection], name: :provider )
      end
 
-     def init( _ ) do
-          state = %{ connection: open() }
+     def init( [connection] ) do
+          state = %{ connection: connection }
 
           { :ok, state }
      end
 
-     defp open() do
-          with { kdb, _ } <- Kdb.open( '127.0.0.1', 5001, 'testusername', 'testpassword' ) do
-               IO.inspect( kdb, label: "Success" )
-               query( kdb, "select avg px,avg vol by sym from trades" )
-               Kdb.close( kdb )
-          else
-               { :error, reason } -> IO.inspect( reason, label: "Error" )
-          end
+     defp query( socket, arg ) do
+          GenServer.cast( :provider, { :query, arg } )
      end
 
-     defp query( socket, arg ) do
-          with { :ok, { type, result } } <- Kdb.sync( socket, { :char_list, to_charlist( arg ) } ) do
+     # callbacks
+     def handle_cast( { :query, arg }, state ) do
+          with { :ok, { type, result } } <- Kdb.sync( state.connection, { :char_list, to_charlist( arg ) } ) do
                IO.inspect( { type, result }, label: "Result" )
           else
                { :error, reason } -> IO.inspect( reason, label: "Error" )
           end
-     end
 
-
-     # callbacks
-     def handle_call( :id, _from, state ) do
-          { :reply, state, state }
-     end
-
-     def handle_cast( :query, state ) do
           { :noreply, state }
      end
 end

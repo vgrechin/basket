@@ -11,12 +11,20 @@ defmodule Market.Constituent do
           { :ok, state }
      end
 
+     def price( process_id ) do
+          GenServer.call( process_id, { :price } )
+     end
+
      def handle_info( :tick, state ) do
           timeout = Rand.uniform( 1000 )
           timer = Process.send_after( self(), :tick, timeout )
           price = state.price + ( Rand.uniform - 0.5 ) * state.price / 100
-          IO.inspect( { state.ticker, price }, label: "Equity")
+          #IO.inspect( { state.ticker, price }, label: "Equity")
 
           { :noreply, %{ state | price: price, timer: timer } }
+     end
+
+     def handle_call( :price, _from, state ) do
+          { :reply, state.price, state }
      end
 end

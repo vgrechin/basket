@@ -1,15 +1,15 @@
 defmodule Basket.Supervisor do
      use Supervisor
 
-     def start_link do
-          Supervisor.start_link( __MODULE__, [] )
+     def start_link( connection ) do
+          Supervisor.start_link( __MODULE__, [connection] )
      end
 
-     def init( _ ) do
+     def init( [connection] ) do
           children = [
-               supervisor( Market.Supervisor, [] )
+               supervisor( Market.Supervisor, [connection] )
           ]
 
-          supervisor( children, strategy: :one_for_all )
+          supervise( children, strategy: :one_for_all )
      end
 end
