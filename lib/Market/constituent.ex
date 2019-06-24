@@ -19,7 +19,7 @@ defmodule Market.Constituent do
           timeout = Rand.uniform( 1000 )
           timer = Process.send_after( self(), :tick, timeout )
           price = state.price + ( Rand.uniform - 0.5 ) * state.price / 100
-          #IO.inspect( { state.ticker, price }, label: "Equity")
+          GenServer.cast( :provider, { :query, state.constituent.symbol, price } )
 
           { :noreply, %{ state | price: price, timer: timer } }
      end
