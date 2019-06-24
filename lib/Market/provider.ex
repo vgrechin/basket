@@ -18,15 +18,12 @@ defmodule Market.Provider do
      end
 
      # callbacks
-     def handle_cast( { :query, symbol, price }, state ) do
-          #IO.inspect( {symbol, price}, label: "Query")
-          IO.puts( "`basket insert (`#{symbol};#{price})" )
-          with { :ok, { type, result } } <- Kdb.sync( state.connection, { :char_list, to_charlist( "`basket insert (`#{symbol};#{price})" ) } ) do
-               IO.inspect( { type, result }, label: "Result" )
+     def handle_cast( { :query, date, time, symbol, price, volume }, state ) do
+          with { :ok, { type, result } } <- Kdb.sync( state.connection, { :char_list, to_charlist(
+                    "`basket insert (#{date};#{time}0;`#{symbol};#{price};#{volume})" ) } ) do
+               { :noreply, state }
           else
                { :error, reason } -> IO.inspect( reason, label: "Error" )
           end
-
-          { :noreply, state }
      end
 end

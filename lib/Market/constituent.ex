@@ -4,9 +4,11 @@ defmodule Market.Constituent do
 
      def init( { ticker, constituent } ) do
           price = 10 + Rand.uniform( 990 )
+          volume = 100 + 100 * Rand.uniform( 100 )
+
           timeout = Rand.uniform( 1000 )
           timer = Process.send_after( self(), :tick, timeout )
-          state = %{ ticker: ticker, price: price, constituent: constituent, timer: timer }
+          state = %{ ticker: ticker, price: price, volume: volume, constituent: constituent, timer: timer }
 
           { :ok, state }
      end
@@ -16,12 +18,20 @@ defmodule Market.Constituent do
      end
 
      def handle_info( :tick, state ) do
+          today = NaiveDateTime.utc_now
+          date = [today.year, today.month, today.day]
+               |> Enum.map(&to_string/1)
+               |> Enum.map(&String.pad_leading(&1, 2, "0"))
+               |> Enum.join(".")
+          time = today |> NaiveDateTime.truncate( :millisecond ) |> NaiveDateTime.to_time()
+          price = state.price + ( Rand.uniform - 0.5 ) * state.price / 100
+          volume = 100 + 100 * Rand.uniform( 100 )
+
           timeout = Rand.uniform( 1000 )
           timer = Process.send_after( self(), :tick, timeout )
-          price = state.price + ( Rand.uniform - 0.5 ) * state.price / 100
-          GenServer.cast( :provider, { :query, state.constituent.symbol, price } )
+          GenServer.cast( :provider, { :query, date, time, state.constituent.symbol, price, volume } )
 
-          { :noreply, %{ state | price: price, timer: timer } }
+          { :noreply, %{ state | price: price, volume: volume, timer: timer } }
      end
 
      def handle_call( :price, _from, state ) do
