@@ -17,7 +17,7 @@ defmodule Basket do
                     end )
                |> Map.new
 
-          with { connection, _ } <- Kdb.open( '127.0.0.1', 5001, 'testusername', 'testpassword' ) do
+          with { connection, _ } <- Kdb.open( '172.31.13.203', 5001, 'testusername', 'testpassword' ) do
                IO.inspect( connection, label: "Success" )
                Basket.Supervisor.start_link( connection )
                trade( basket )
@@ -35,6 +35,6 @@ defmodule Basket do
 
      defp trade( basket ) do
           constituents = Enum.reduce basket, %{}, &spawn/2
-          Process.sleep( :infinity )
+          Process.sleep( 60000 )
      end
 end

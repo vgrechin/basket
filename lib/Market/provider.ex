@@ -35,8 +35,11 @@ defmodule Market.Provider do
      end
 
      def handle_cast( { :query, date, time, symbol, price, volume }, state ) do
-          with { :ok, { type, result } } <- Kdb.sync( state.connection, { :char_list, to_charlist(
-                    "`basket insert (#{date};#{time}0;`#{symbol};#{price + state.skew * price};#{volume})" ) } ) do
+          query = "`basket insert (#{date};#{time}0;`#{symbol};#{price + state.skew * price};#{volume})"
+          #IO.inspect( query, label: "Query")
+          #query = "insertTrade [#{date};#{time}0;`#{symbol};#{price + state.skew * price};#{volume}]"
+
+          with { :ok, { type, result } } <- Kdb.sync( state.connection, { :char_list, to_charlist( query ) } ) do
                { :noreply, state }
           else
                { :error, reason } -> IO.inspect( reason, label: "Error" )
