@@ -17,7 +17,7 @@ defmodule Basket do
                     end )
                |> Map.new
 
-          with { connection, _ } <- Kdb.open( '127.0.0.1', 5001, 'testusername', 'testpassword' ) do
+          with { connection, _ } <- Kdb.open( '127.0.0.1', 5010, 'testusername', 'testpassword' ) do
                IO.inspect( connection, label: "Success" )
                Basket.Supervisor.start_link( connection )
                trade( basket )

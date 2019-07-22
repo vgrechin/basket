@@ -4,9 +4,9 @@ defmodule Market.Constituent do
 
      def init( { ticker, constituent } ) do
           price = 10 + Rand.uniform( 990 )
-          volume = 100 + 100 * Rand.uniform( 100 )
+          volume = 100 + 100 * Rand.uniform( 99 )
 
-          timeout = Rand.uniform( 1000 )
+          timeout = Rand.uniform( 300 )
           timer = Process.send_after( self(), :tick, timeout )
           state = %{ ticker: ticker, price: price, volume: volume, constituent: constituent, timer: timer }
 
@@ -27,7 +27,7 @@ defmodule Market.Constituent do
           price = state.price + ( Rand.uniform - 0.5 ) * state.price / 100
           volume = 100 + 100 * Rand.uniform( 100 )
 
-          timeout = Rand.uniform( 1000 )
+          timeout = Rand.uniform( 300 )
           timer = Process.send_after( self(), :tick, timeout )
           GenServer.cast( :provider, { :query, date, time, state.constituent.symbol, price, volume } )
 
