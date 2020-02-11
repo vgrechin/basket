@@ -7,3 +7,11 @@ select vwap:vol wavg px by sym,bkt:100000000 xbar tm from basket
 select tm, px from basket where sym=`AAPL
 select tm, px from basket where sym=`GOOG
 select tm, px from basket where sym=`IBM
+select tm, px from basket where sym=`AAPL
+select tm, px from basket where sym=`MSFT
+
+basket:([] sym:`AAPL`MSFT)
+
+.u.upd:insert
+basket:([] dt:"d"$(); tm:"t"$(); sym:`$(); px:"f"$(); vol:"i"$())
+"`basket insert (#{date};#{time}0;`#{symbol};#{price};#{volume})"

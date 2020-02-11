@@ -35,8 +35,16 @@ defmodule Market.Provider do
      end
 
      def handle_cast( { :query, date, time, symbol, price, volume }, state ) do
-          with :ok <- Kdb.async( state.connection, { :char_list, to_charlist(
-                    "`basket insert (#{date};#{time}0;`#{symbol};#{price + state.skew * price};#{volume})" ) } ) do
+          milliseconds = Integer.floor_div( elem( time.microsecond, 0 ), 1000 )
+          with :ok <- Kdb.async( state.connection, { :mixed_list, [
+               { :symbol, <<".u.upd">> },
+               { :symbol, <<"basket">> },
+               { :mixed_list, [
+                    { :date, Kdb.date_to_int( date ) },
+                    { :time, Kdb.time_to_int( { time.hour, time.minute, time.second }, milliseconds ) },
+                    { :symbol, <<"#{symbol}">> },
+                    { :float, price + state.skew * price },
+                    { :int, volume } ] } ] } ) do
 
                { :noreply, state }
           else
