@@ -2,6 +2,11 @@
 
 Market data provider
 
+## Initialization
+
+.u.upd:insert
+basket:([] dt:"d"$(); tm:"t"$(); sym:`$(); px:"f"$(); vol:"i"$())
+
 ## Compilation
 
 mix deps.get
