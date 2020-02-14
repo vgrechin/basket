@@ -5,12 +5,15 @@ Market data provider
 ## Initialization
 
 .u.upd:insert
+
 basket:([] dt:"d"$(); tm:"t"$(); sym:`$(); px:"f"$(); vol:"i"$())
 
 ## Compilation
 
 mix deps.get
+
 cp config/rebar.config deps/qErlang
+
 mix run --no-start
 
 ## Installation
