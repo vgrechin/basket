@@ -1,8 +1,8 @@
 # Basket
 
-Market data provider
+S&P500 Market data provider
 
-## Initialization
+## KDB Initialization
 
 .u.upd:insert
 
@@ -24,7 +24,7 @@ by adding `basket` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:basket, "~> 0.1.0"}
+    {:basket, "~> 1.0.0"}
   ]
 end
 ```
