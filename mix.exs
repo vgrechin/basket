@@ -10,7 +10,7 @@ defmodule Basket.MixProject do
       deps: deps(),
       releases: [
         basket: [
-          include_executables_for: [:windows],
+          include_executables_for: [:unix],
           applications: [runtime_tools: :permanent]
         ],
         bootcamp: [
