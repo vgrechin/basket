@@ -16,6 +16,10 @@ cp config/rebar.config deps/qErlang
 
 mix run --no-start
 
+## Bootcamp run
+
+bin/bootcamp.bat start
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
