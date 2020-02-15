@@ -31,7 +31,7 @@ defmodule Market.Constituent do
           { :noreply, %{ state | price: price, volume: volume, timer: timer } }
      end
 
-     def handle_call( :price, _from, state ) do
+     def handle_call( { :price }, _from, state ) do
           { :reply, state.price, state }
      end
 end
