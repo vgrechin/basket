@@ -16,5 +16,7 @@ jobs:
         otp-version: 22.2 # Define the OTP version [required]
     - name: Install Dependencies
       run: mix deps.get
+    - name: Copy Rebar config
+      run: cp config/rebar.config deps/qErlang
     - name: Run Tests
       run: mix test
