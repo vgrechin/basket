@@ -4,6 +4,8 @@ S&P500 Market data provider
 
 ## KDB Initialization
 
+q.exe -p 5001
+
 .u.upd:insert
 
 basket:([] dt:"d"$(); tm:"t"$(); sym:`$(); px:"f"$(); vol:"i"$())
