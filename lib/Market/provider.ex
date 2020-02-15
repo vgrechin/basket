@@ -19,10 +19,6 @@ defmodule Market.Provider do
           { :ok, state }
      end
 
-     defp query( socket, arg ) do
-          GenServer.cast( :provider, { :query, arg } )
-     end
-
      # callbacks
      def handle_info( :tick, state ) do
           skew = ( Rand.uniform - 0.5 ) / 200

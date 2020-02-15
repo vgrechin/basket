@@ -34,7 +34,7 @@ defmodule Basket do
      end
 
      defp trade( basket ) do
-          constituents = Enum.reduce basket, %{}, &spawn/2
+          _constituents = Enum.reduce basket, %{}, &spawn/2
           Process.sleep( :infinity )
      end
 end
