@@ -20,13 +20,15 @@ jobs:
       run: cp config/rebar.config deps/qErlang
     - name: Run Tests
       run: mix test --no-start
-    - name: Prepare distribution
+    - name: Prepare release files
       run: MIX_ENV=prod mix release
     - name: Create dataset directory
       run: mkdir -p _build/prod/rel/basket/deps/SnP500s/data
     - name: Copy constituents file
       run: cp deps/SnP500s/data/constituents.csv _build/prod/rel/basket/deps/SnP500s/data
+    - name: Archive distribution
+      run: cd _build/prod/rel && 7z a basket.7z basket
     - uses: actions/upload-artifact@v1
       with:
         name: basket
-        path: _build/prod/rel/basket
+        path: _build/prod/rel/basket.7z
